@@ -1,0 +1,91 @@
+\subsection*{QuickSort}
+
+\Alg 
+\begin{enumerate}
+    \item Выбрать опорный элемент pivot.
+    \item Произвести процедуру Partition, то есть распределить элементы в следующем порядке \textbf{(*)}:
+    \begin{enumerate}
+        \item Элементы $<$ pivot. Положим, что они занимают отрезок $[i_1, i_2].$
+        \item Элементы $=$ pivot. Положим, что они занимают отрезок $[i_2 + 1, i_3].$
+        \item Элементы $>$ pivot. Положим, что они занимают отрезок $[i_3 + 1, i_4]$
+    \end{enumerate}
+    \item Вызвать рекурсивно от $[i_1, i_2]$ и $[i_3 + 1, i_4]$.
+\end{enumerate}
+
+\subsection*{Пример процедуры Partition}
+
+(Нам дают индексы left, right - начало и конец сортируемого отрезка, pivot - опорный элемент, vec - сортируемый массив) 
+
+\begin{enumerate}
+    \item Распределим элементы так, чтобы сначала шли все элементы $<$ pivot, а потом - все остальные:\\
+    
+    У нас есть индексы r0 и i. Мы поддерживаем инвариант: vec[i] < vec[r0]. Мы также постепенно двигаем i вправо, а r0 влево. Если инвариант перестаёт поддерживаться, то мы меняем местами значения vec[i] и vec[r0].
+    \item Теперь распределим элементы так, чтобы выполнялось \textbf{(*)}:\\
+
+    У нас есть индексы l0 и i (Стоит отметить, что l0 изначально стоит в элементы, где vec[l0] $\geq$ pivot. Мы поддерживаем инвариант: vec[l0] < vec[i]. Мы также постепенно двигаем l0 вправо, а i влево. Если инвариант перестаёт поддерживаться, то мы меняем местами значения vec[l0] и vec[i].
+\end{enumerate}
+
+Теперь просто найдём индексы, где начинается/заканчивается отрезок из элементов $=$ pivot и вернём пару из таких индексов.
+
+% \begin{lstlisting}
+% pair<int, int> Partition(int[] array, int l, int r) {
+%   int pivot = ChoosePivot(array, l, r);
+%   int i = l, j = r;
+%   while(i <= j) {
+%     while (array[i] < pivot) { ++i; }
+%     while (array[j] > pivot) { --j; }
+%     if (i >= j) { break; }
+%     Swap(array[i], array[j]); ++i; --j;
+%   }
+%   return {j, i};
+% }
+% \end{lstlisting}
+
+\begin{lstlisting}
+#include <vector>
+
+std::pair<int, int> Partition(int left, int right, int pivot,
+                              std::vector<int>& vec) {
+  int r0 = right;
+  while (r0 != left && vec[r0] >= pivot) {
+    r0--;
+  }
+  for (int i = left; i < r0; ++i) {
+    if (vec[i] >= pivot) {
+      while (r0 > i && vec[r0] >= pivot) {
+        r0--;
+      }
+      if (i < r0) {
+        std::swap(vec[i], vec[r0]);
+        r0--;
+      }
+    }
+  }
+  int l0 = left;
+  while (vec[l0] < pivot) {
+    l0++;
+  }
+  for (int i = right; i > l0; --i) {
+    if (vec[i] == pivot) {
+      while (l0 < i && vec[l0] == pivot) {
+        l0++;
+      }
+      std::swap(vec[i], vec[l0]);
+      l0++;
+    }
+  }
+  int idx1 = left;
+  while (vec[idx1] != pivot) {
+    idx1++;
+  }
+  int idx2 = right;
+  while (vec[idx2] != pivot) {
+    idx2--;
+  }
+  return {idx1, idx2};
+}
+\end{lstlisting}
+
+\Thbd Среднее время работы быстрой сортировки при случайном выборе pivot составит $O(N\,log\,N)$, а доппамять логарифмична.
+
+\pagebreak

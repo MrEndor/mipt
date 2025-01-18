@@ -1,0 +1,23 @@
+
+\begin{enumerate}
+    \item \textit{Смысл:} $dp[mask]$ - максимальная ценность, не превышающая W, предметов, которые указаны в маске.
+    \item \textit{База:} $dp[:] = 0$
+    \item \textit{Переход:} Перебираем все возможные комбинации предметов и высчитываем следующую стоимость комбинацию с тем предметом, которого нету в комбинации 
+    \item \textit{Ответ:} $\max\limits_{i \in (0,\,2^n)} dp[i]$
+\end{enumerate}
+
+\begin{lstlisting}
+for (int mask = 1; mask < (1 << n); ++mask) {
+  for (int i = 0; i < n; ++i) {
+    dp[mask | (1 << i)] = dp[mask];
+    if (mask & (1 << i) == 0 && w(mask) + w_i <= W) {
+      dp[mask | (1 << i)] = dp[mask] + c_i
+    }
+  }
+}
+\end{lstlisting}
+
+\textbf{Асимптотика} \\
+За счет циклов $O(2^n n)$
+
+\pagebreak

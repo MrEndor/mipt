@@ -1,0 +1,45 @@
+\Def Задача о рюкзаке — NP-полная задача комбинаторной оптимизации.
+
+\subsection*{Постановка задачи (линейно-алгебраическая)}
+
+Даны два вектора $w = (w_0, \dots , w_{n-1})$ и $c = (c_0, \dots , c_{n-1})$, оба вектора
+из $\N^n$. Нужно построить битовый вектор $b \in \{0,\,1\}^n$ такой, что
+
+\begin{center}
+    \large
+    $\begin{cases}
+    (w, b) \leq W\\
+    (c, b) \rightarrow max
+    \end{cases}$
+\end{center}
+
+\subsection*{Постановка задачи (классическая)}
+
+Есть $n$ предметов, каждый из них имеет вес $w_i$ и стоимость $c_i$. Надо взять какие-то предметы в рюкзак так, чтобы их суммарный вес не превосходил $W$, а стоимость максимальна.
+
+\subsection*{Решение за $O(nW)$}
+
+\begin{enumerate}
+    \item \textit{Смысл dp:} $dp[i][w]$ = максимальная ценность предметов, полученных из первых $i$ имеющихся предметов, с суммарным весом не превышающим $w$.
+    \item \textit{База dp:} $dp[:][:]\,=\,0$
+    \item \textit{Ф-ла пересчета:} $dp[i][w]\,=\,max
+    \begin{cases}
+        dp[i-1][w] & \text{, $i$-й предмет не берем}\\
+        dp[i-1][w-w_i]\,+\,c_i  & \text{, $i$-й предмет берем}
+    \end{cases}$
+    \item \textit{Порядок вычислений} $for\,(i = 1 \dots n)\,\{\,for\,(w = 0 \dots W)\,\}$
+    \item \textit{Ответ:} $dp[n][W]$
+\end{enumerate}
+
+\begin{lstlisting}
+dp = [[0 for _ in range(W + 1)] for _ in range(n + 1)]
+
+for i in range(1, n + 1):
+  for j in range(W + 1):
+    if w[i - 1] > j:  
+      dp[i][j] = dp[i - 1][j]
+    else:
+      dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - w[i - 1]] + v[i - 1])
+\end{lstlisting}
+
+\pagebreak

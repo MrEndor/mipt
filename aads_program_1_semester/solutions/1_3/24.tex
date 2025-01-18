@@ -1,0 +1,61 @@
+\subsection*{Поиск порядковой статистики}
+
+\Alg
+
+Для поиска порядковой статистики будем хранить вспомогательную величину Size(): количество вершин в поддереве нашей вершины (в поддерево включается и сама вершина).
+
+\begin{enumerate}
+    \item left.Size() = k, то завершаем поиск
+    \item left.Size() > k, то рекурсивно ищем в левом поддереве k
+    \item left.Size() < k, то рекурсивно ищем в правом поддереве (k - left.Size() - 1)
+\end{enumerate}
+
+\begin{lstlisting}
+optional<T> FindKthElement(Node* node, size_t serial) {
+  if (node == nullptr || serial > Size(node)) {
+    return {};
+  }
+  if (Size(node->left) == serial) {
+    return node->value;
+  }
+  if (Size(node->left) > serial) {
+    return FindKthElement(node->left, serial);
+  }
+  return FindKthElement(node->right, serial - Size(node->left) - 1);
+}
+\end{lstlisting}
+
+\subsubsection*{LowerBound}
+
+\Def LowerBound - поиск первого элемента, который не больше чем данное значение.
+
+\Alg
+
+\begin{enumerate}
+    \item Если заданное значение равно node.value, то завершаем поиск и возвращаем node.value.
+    \item Если значение в вершине меньше чем заданное, то рекурсивно ищем в правом поддереве. Если мы нашли значение, то возвращаем его, иначе возвращаем значение текущей вершины.
+    \item Если значение в вершине больше чем заданное, рекурсивно ищем в левом поддереве
+\end{enumerate}
+
+\begin{lstlisting}
+optional<T> LowerBound(Node* node, const T& value) {
+  if (node == nullptr) {
+    return {};
+  }
+  if (node->value == value) {
+    return node->value;
+  }
+  if (node->value < value) {
+    optional<T> next = LowerBound(node->right, value);
+    if (next.has_value()) {
+      return next.value();
+    }
+    return node->value;
+  }
+  return LowerBound(node->left, value);
+}
+\end{lstlisting}
+
+\Statement Операции FindKthElement, LowerBound работают за $O(h)$, где h -- высота дерева
+
+\pagebreak

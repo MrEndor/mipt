@@ -1,0 +1,57 @@
+\subsection*{Алгоритм Евклида}
+
+\begin{lstlisting}
+int gcd(int a, int b) {
+    while (b != 0) {
+        a %= b;
+        swap(a, b);
+    }
+    return a;
+}
+\end{lstlisting}
+
+\subsection*{Расширенный алгоритм  Евклида}
+
+Расширенный алгоритм находит, помимо $g = gcd(a,\,b)$,  такие целые коэффициенты x и y, что $a \cdot x + b \cdot y = g$
+Пусть мы посчитали нужные коэффициенты $x'\,\text{и}\,y'$, когда рекурсивно считали $gcd(b,\,a\,mod\,b)$. Иными словами, у нас есть решение $(x',\,y')$ для пары $(b,\,a\,mod\,b)$
+
+$$b \cdot x' + (a\,mod\,b) \cdot y' = g$$
+
+Чтобы получить решение для исходной пары, запишем выражение $(a\,mod\,b)$ по определению как $(a - \lfloor{\frac{a}{b}}\rfloor \cdot b)$ и подставим в приведенное выше равенство
+
+$$b \cdot x' + (a - \lfloor{\frac{a}{b}}\rfloor \cdot b) \cdot y' = g$$
+
+Теперь выполним перегруппировку слагаемых (сгруппируем по исходным a и b) и получим:
+
+$$a \cdot y' + b \cdot (x' - \lfloor{\frac{a}{b}}\rfloor \cdot y') = g$$
+
+
+$$\begin{cases}
+x = y'\\
+y = x' - \lfloor{\frac{a}{b}}\rfloor \cdot y'
+\end{cases}$$
+
+\begin{lstlisting}
+int gcd(int a, int b, int &x, int &y) {
+  if (b == 0) {
+    x = 1;
+    y = 0;
+    return a;
+  }
+  int x1, y1;
+  int d = gcd(b, a % b, x1, y1);
+  x = y1;
+  y = x1 - (a / b) * y1;
+  return d;
+}
+\end{lstlisting}
+
+Рассмотрим уравнение $ax + my = 1$. Возьмем обе части по модулю m
+и $ax = 1 \Rightarrow x = a^{-1}$
+
+То есть с помощью расширенного алгоритма Евклида ищем обратный
+элемент в $\Z_m\,\text{за}\,O(log\,m)$.
+
+Стоит отметить, что расширенный алгоритм Евклида не гарантирует, что $x < m$, поэтому нужно будет дополнительно сделать $x = x\; \%\; m$.
+
+\pagebreak

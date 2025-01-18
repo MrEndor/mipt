@@ -1,0 +1,90 @@
+\subsection*{Случай наличия обновлений на подотрезке}
+
+\textbf{Идея отложенных операций} 
+Применим следующий трюк: если нам нужно обновить значение подотрезка, то мы отложим эту операцию до востребования. Запомним в соответствующих вершине/блоке, что мы должны в будущем сделать обновление в потомков. Если нам вдруг понадобится значение, лежащее в вершине/блоке, то мы посчитаем его так, как будто мы обновили отрезок, а напоминание о том, что надо сделать со всеми элементами, мы "протолкнем"в потомков.
+
+\Def Операцией группового обновления ch будем называть запрос, в
+ходе которого применяется на подотрезке операция $ch(\cdot,\,val)$.
+
+Свойства на операцию ch, если op — операция запроса на отрезке.
+
+\begin{enumerate}
+    \item Существование нейтрального элемента
+    \item Ассоциативность: $ch(a,\,ch(b,\,c))\,=\,ch(ch(a,\,b),\,c)$
+    \item Дистрибутивность: $ch(op(a,\,b),\,c)\,=\,op(ch(a,\,c),\,ch(b,\,c))$
+\end{enumerate}
+
+\Def Несогласованность -- величина, с которой надо выполнить операцию op, чтобы получить корректный результат.
+
+В каждый момент времени в узле необязательно лежит истинное значение op на отрезке. Но к моменту запроса будем осуществлять проталкивание несогласованности.
+
+\begin{lstlisting}
+void push(int node) {
+  tree[2 * node + 1].lazy = ch(tree[2 * node + 1].lazy, tree[node].lazy);
+  tree[2 * node + 2].lazy = ch(tree[2 * node + 2].lazy, tree[node].lazy);
+
+  tree[node].d = ch_neutral
+}
+\end{lstlisting}
+
+Вызывать push надо каждый раз, когда мы обращаемся к вершине, которая могла
+быть изменена
+
+\subsubsection{Запрос на группового обновления}
+
+\begin{lstlisting}
+void update(int node, int a, int b, T val) {
+  l = tree[node].left
+  r = tree[node].right
+
+  if ([l, r) is subset [a, b)) {
+    tree[node].lazy = ch(tree[node].lazy, val);
+    return;
+  }
+  push(node);
+
+  update(2 * node + 1, a, b, val);
+  update(2 * node + 2, a, b, val);
+  tree[node].val = op(
+    ch(tree[2 * node + 1].val, tree[2 * node + 1].lazy),
+    ch(tree[2 * node + 2].val, tree[2 * node + 2].lazy),
+  );
+}
+\end{lstlisting}
+
+\Alg
+\begin{enumerate}
+    \item Первая часть посвящена разбиению на объединение подотрезков. Если подмножество, то накапливаем несогласованность.
+    \item Проталкивание.
+    \item Обновляем детей.
+    \item Обновляем результат. Заметим, что у нас несогласованность уже нейтральная, так что надо просто собрать op с «истинных» значений у детей.
+\end{enumerate}
+
+\subsection{Ответ на запрос}
+
+Выполняется аналогично групповому обновлению
+
+\begin{lstlisting}
+int query(int node, int a, int b) {
+  l = tree[node].left
+  r = tree[node].right
+
+  if ([l, r) is subset [a, b)) {
+    return ch(tree[node].val, tree[node].lazy);
+  }
+  push(node);
+
+  answer = op(
+    query(2 * node + 1, a, b),
+    query(2 * node + 2, a, b),
+  );
+
+  tree[node].val = op(
+    ch(tree[2 * node + 1].val, tree[2 * node + 1].lazy),
+    ch(tree[2 * node + 2].val, tree[2 * node + 2].lazy),
+  );
+  return answer;
+}
+\end{lstlisting}
+
+\pagebreak

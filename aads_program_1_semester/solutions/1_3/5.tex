@@ -1,0 +1,72 @@
+\section*{Факторизация.}
+
+\Def Факторизация - процесс разложения числа делители.
+
+\begin{enumerate}
+    \item Линейный алгоритм. Для каждого i от 1 до n проверяем, что число n делиться на i.
+\begin{lstlisting}
+for (int i = 1; i <= n; ++i) {
+  if (n % i == 0) {  
+    cout << i << " ";  
+  }  
+}
+\end{lstlisting}
+    \item Если $d$ - делитель $n$, то и $n/d$ - делитель, а значит достаточно перебирать не до $n$, а до $[\sqrt{n}]$.
+\begin{lstlisting}
+for (int i = 1; i <= sqrt(n); ++i) {  
+  if (n % i == 0) {  
+    cout << i << " ";  
+    if (i != n / i) {  
+      cout << n / i << " ";  
+    }  
+  }  
+}
+\end{lstlisting}
+\end{enumerate}
+
+\textbf{Алгоритм разложения числа на простые делители (Оптимизированный).}
+
+\begin{lstlisting}
+int d = 2;
+while (n > 1) {
+  if (n % d == 0) {
+    cout << d << " ";
+    n /= d;
+  } else if (d * d > n) {
+    cout << n;
+    break;
+  } else {
+    ++d;
+  }
+}
+\end{lstlisting}
+
+Написан на основе: \href{https://neerc.ifmo.ru/wiki/index.php?title=Разложение_на_множители_(факторизация)#.D0.9F.D1.81.D0.B5.D0.B2.D0.B4.D0.BE.D0.BA.D0.BE.D0.B4_.D0.BD.D0.B0.D1.85.D0.BE.D0.B6.D0.B4.D0.B5.D0.BD.D0.B8.D1.8F_.D0.BF.D1.80.D0.BE.D1.81.D1.82.D1.8B.D1.85_.D0.BC.D0.BD.D0.BE.D0.B6.D0.B8.D1.82.D0.B5.D0.BB.D0.B5.D0.B9}{Викиконспекты (ИТМО). Псевдокод нахождения простых делителей.}
+
+\section*{Функция Эйлера.}
+
+\Def Функция Эйлера от числа $n, \varphi(n)$, равна количеству чисел, меньших $n$ и взаимно простых с ним. 
+
+Например, $\varphi(5) = 4$ (числа $1, 2, 3, 4$).
+
+\textbf{Свойства функции Эйлера.}
+
+\begin{enumerate}
+    \item Если $p$ - простое, то $\varphi(p) = p - 1$.
+    \item Если $p$ - простое, то $\varphi(p^\alpha) = p^\alpha - p^{\alpha - 1}$.
+    \item Если $n, m$ взаимно просты, то $\varphi(m \cdot n) = \varphi(m) \cdot \varphi(n)$. 
+\end{enumerate}
+
+\textbf{Сводимость вычисления функции Эйлера к факторизации.}
+
+Наивный алгоритм. Для каждого числа от 1 до $n$ проверяем, является ли делителем $n$.
+
+Немного преобразований:
+
+$$\varphi \brackets{n} = \varphi \brackets{\prod_{i}{p_{i}^{\alpha_i}}} = \prod_{i}\varphi\brackets{p^{\alpha_i}_{i}} = \prod_{i}\brackets{p^{\alpha_i}_{i} - p^{\alpha_i - 1}_{i}} = $$
+
+$$\prod_{i}\brackets{p^{\alpha_i}_{i}\brackets{1 - \frac{1}{p_i}}}=\prod_{i}p^{\alpha_i}_{i} \cdot \prod_i\brackets{1 - \frac{1}{p_i}} = n \cdot \prod_i\brackets{1 - \frac{1}{p_i}}$$
+
+Таким образом, зная факторизацию числа, можно вычислить $\varphi(n)$ за $\mathcal{O}(\log n)$.
+
+\pagebreak

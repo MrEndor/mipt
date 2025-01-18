@@ -1,0 +1,35 @@
+\subsection*{Основные операции:}
+
+\textbf{Insert: }
+ \begin{lstlisting}
+void Heap::Insert(int x) {
+  tree.push_back(x); 
+  ++size; 
+  SiftUp(size - 1); 
+}
+\end{lstlisting}
+Вставляем элемент в конец. Тогда могли нарушиться только неравенства с родителем. Поэтому необходимо просеять наверх.
+\textit{Асимптотика: O(log(n)) за счет выполнения операции SiftUp()}
+
+\textbf{GetMin: }
+ \begin{lstlisting}
+int Heap::GetMin() { 
+  return tree[0]; 
+}
+\end{lstlisting}
+Минимальный элемент кучи лежит в вершине дерева, просто его выводим. 
+\textit{Асимптотика: O(1)}
+
+\textbf{ExtractMin: }
+ \begin{lstlisting}
+void Heap::ExtractMin() {
+  tree[0] = tree[size - 1]; 
+  tree.pop_back();
+  --size;
+  SiftDown(0);
+}
+\end{lstlisting}
+Меняем первый элемент и последний местами, удаляем последний. Т.к. у первого элемента нет родителей, то неравенства могли нарушиться только с детьми, поэтому просеиваем элемент вниз.\\
+\textit{ Асимптотика: O(log(n)) за счет выполнения операции SiftDown()}
+
+\pagebreak
